@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { ProductContext } from "../utils/Context";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Nav = () => {
   const [products] = useContext(ProductContext);
@@ -9,12 +9,18 @@ const Nav = () => {
     products && products.reduce((acc, cv) => [...acc, cv.category], []);
   distinct_category = [...new Set(distinct_category)];
 
+  const { search, pathname } = useLocation();
+  console.log(search, pathname);
+
   return (
     <>
       <nav className="w-[15%] h-full bg-zinc-50 flex flex-col items-center pt-5">
-        <Link to="/" className="text-red-400">
-          Home
-        </Link>
+        {pathname != "/" ||
+          (search.length > 0 && (
+            <Link to="/" className="text-red-400">
+              Home
+            </Link>
+          ))}
         <a
           className="py-2 px-5 border rounded border-blue-200 text-blue-300"
           href="/create"
