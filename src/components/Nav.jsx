@@ -1,16 +1,29 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ProductContext } from "../utils/Context";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Nav = () => {
   const [products] = useContext(ProductContext);
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
 
   let distinct_category =
     products && products.reduce((acc, cv) => [...acc, cv.category], []);
   distinct_category = [...new Set(distinct_category)];
 
   const { search, pathname } = useLocation();
-  console.log(search, pathname);
+
+  const handleSearch = () => {
+    if (searchTerm.trim().length > 0) {
+      navigate(`/?search=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   return (
     <>
@@ -27,6 +40,27 @@ const Nav = () => {
         >
           Add New Product
         </a>
+
+        <hr className="my-3 w-[80%]" />
+
+        {/* Search Box */}
+        <div className="w-[80%] flex mb-3">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Search products..."
+            className="border rounded-l p-2 w-[80%] outline-none"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-blue-400 text-white px-3 rounded-r"
+          >
+            Go
+          </button>
+        </div>
+
         <hr className="my-3 w-[80%]" />
 
         <h1 className="text-xl mb-3 w-[80%] bg-blue-500 p-2 rounded">

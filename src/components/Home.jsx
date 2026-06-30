@@ -10,7 +10,9 @@ const Home = () => {
   const [products] = useContext(ProductContext);
   const { search } = useLocation();
 
-  const category = decodeURIComponent(search.split("=")[1]);
+  const queryParams = new URLSearchParams(search);
+  const category = queryParams.get("category");
+  const searchTerm = queryParams.get("search");
 
   const [filteredProducts, setfilteredProduct] = useState(null);
 
@@ -24,17 +26,23 @@ const Home = () => {
   };
 
   useEffect(() => {
-    // ✅ products load hone ka wait karo
     if (!products) return;
 
     setfilteredProduct(null);
 
-    if (category === "undefined") {
+    if (searchTerm) {
+      // search term ke basis pe filter karo (title se match)
+      const result = products.filter((p) =>
+        p.title.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+      setfilteredProduct(result);
+    } else if (!category) {
       setfilteredProduct(products);
     } else {
       getproductscategory();
     }
-  }, [category, products]);
+  }, [category, searchTerm, products]);
+
   return products ? (
     <>
       <Nav />
